@@ -1,4 +1,5 @@
-use std::{fs::read_to_string, iter::zip};
+#![warn(clippy::pedantic)]
+use std::{collections::HashMap, fs::read_to_string, iter::zip};
 
 fn main() {
     if let Ok(text) = read_to_string("input.txt") {
@@ -6,7 +7,8 @@ fn main() {
         let left_list = string_vec_to_int_vec(left_list);
         let right_list = string_vec_to_int_vec(right_list);
 
-        println!("The result is: {}", calculate_result(left_list, right_list));
+        println!("The result for part 1 is: {}", calculate_result_part1(&left_list, &right_list));
+        println!("The result for part 2 is: {}", calculate_result_part2(&left_list, &right_list));
     } else {
         println!("That file doesnt fucking exist !!!!!!");
     }
@@ -28,22 +30,22 @@ fn parse(input: &str) -> (Vec<&str>, Vec<&str>) {
         }
     }
 
-    return (left_list, right_list);
+    (left_list, right_list)
 }
 
 fn string_vec_to_int_vec(x: Vec<&str>) -> Vec<i32> {
-    return x
+    x
         .into_iter()
         .map(|x| {
             x.parse::<i32>()
                 .unwrap_or_else(|_err| panic!("That is NOT a number !!!!!!!"))
         })
-        .collect();
+        .collect()
 }
 
-fn calculate_result(mut left_list: Vec<i32>, mut right_list: Vec<i32>) -> i32 {
-    left_list.sort();
-    right_list.sort();
+fn calculate_result_part1(left_list: &Vec<i32>, right_list: &Vec<i32>) -> i32 {
+    let mut left_sorted = left_list.clone(); left_sorted.sort_unstable();
+    let mut right_sorted = right_list.clone(); right_sorted.sort_unstable();
 
     let mut result = 0;
 
@@ -51,5 +53,29 @@ fn calculate_result(mut left_list: Vec<i32>, mut right_list: Vec<i32>) -> i32 {
         result += (left - right).abs();
     }
 
-    return result;
+    result
+}
+
+fn calculate_result_part2(left_list: &Vec<i32>, right_list: &Vec<i32>) -> i32 {
+    let mut count: HashMap<i32, i32> = HashMap::new();
+
+    // get keys from left list
+    for n in left_list {
+        count.insert(*n, 0);
+    }
+
+    // count occurences on right
+    for n in right_list {
+        if let Some(slot) = count.get_mut(n) {
+            *slot += 1;
+        }
+    }
+
+    let mut result = 0;
+
+    for (k, v) in count {
+        result += k * v;
+    }
+
+    result
 }
