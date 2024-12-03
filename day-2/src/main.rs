@@ -25,6 +25,16 @@ fn part_1_solution(reports: &Vec<Vec<i32>>) -> i32 {
     num_safe
 }
 
+// TODO: this tests every possible removal, which is O(n).
+// You could instead just test two removals; the left and right corresponding to the problem difference.
+// This would make it O(1), but would require trickier coding - the check report function would have to return the index of the problem difference,
+// something like this?
+/*
+enum Safeness {
+    Safe,
+    UnsafeAtIndex(i32)
+}
+*/
 fn part_2_solution(reports: &Vec<Vec<i32>>) -> i32 {
     let mut num_safe = 0;
     for report in reports {
